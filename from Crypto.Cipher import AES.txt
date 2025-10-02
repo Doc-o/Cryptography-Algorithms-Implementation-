@@ -1,0 +1,50 @@
+from Crypto.Cipher import AES
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+import hashlib
+
+# ----------------- AES Encryption/Decryption -----------------
+def aes_demo():
+    key = b'ThisIsASecretKey'  # 16-byte key
+    cipher = AES.new(key, AES.MODE_EAX)
+    nonce = cipher.nonce
+    ciphertext, tag = cipher.encrypt_and_digest(b"Hello from AES encryption!")
+    
+    print("\n--- AES ---")
+    print("Ciphertext:", ciphertext)
+    
+    # Decrypt
+    cipher_dec = AES.new(key, AES.MODE_EAX, nonce=nonce)
+    plaintext = cipher_dec.decrypt(ciphertext)
+    print("Decrypted:", plaintext.decode())
+
+# ----------------- RSA Encryption/Decryption -----------------
+def rsa_demo():
+    key = RSA.generate(2048)
+    public_key = key.publickey()
+    cipher_rsa = PKCS1_OAEP.new(public_key)
+    
+    message = b"Hello from RSA encryption!"
+    ciphertext = cipher_rsa.encrypt(message)
+    
+    print("\n--- RSA ---")
+    print("Ciphertext:", ciphertext[:50], "...")  # show part
+    
+    # Decrypt
+    cipher_rsa_dec = PKCS1_OAEP.new(key)
+    decrypted = cipher_rsa_dec.decrypt(ciphertext)
+    print("Decrypted:", decrypted.decode())
+
+# ----------------- SHA Hashing -----------------
+def sha_demo():
+    message = "mypassword123"
+    hash_val = hashlib.sha256(message.encode()).hexdigest()
+    
+    print("\n--- SHA ---")
+    print("Original:", message)
+    print("SHA-256 Hash:", hash_val)
+
+# Run Demos
+aes_demo()
+rsa_demo()
+sha_demo()
